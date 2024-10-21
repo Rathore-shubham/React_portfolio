@@ -31,7 +31,7 @@ async function sendMail(emailDetails) {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: emailDetails.to, // Use the 'to' field dynamically
+      to: emailDetails.to,
       subject: emailDetails.subject,
       text: emailDetails.text,
       html: emailDetails.html,
@@ -46,30 +46,26 @@ async function sendMail(emailDetails) {
 
 // POST route to send an email
 router.post('/send-email', async (req, res) => {
-  const { to, subject, text, html } = req.body;
+  const { name, to, subject, text, html } = req.body;
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS // Your app password or email password
-    },
-});
+  // Include the user's name in the email text or HTML
+  const emailText = `${name} has contacted you:\n\n${text}`;
+  const emailHtml = `<p><strong>${name}</strong> has contacted you:</p><p>${html}</p>`;
 
-const mailOptions = {
-    from: process.env.EMAIL_USER,
+  const emailDetails = {
     to: to,
     subject: subject,
-    text: text,
-};
+    text: emailText,
+    html: emailHtml,
+  };
 
-try {
-    await transporter.sendMail(mailOptions);
+  try {
+    await sendMail(emailDetails); // Call the sendMail function
     res.status(200).json({ message: "Email sent successfully!" });
-} catch (error) {
+  } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).json({ message: "Error sending email", error: error.message });
-}
+  }
 });
 
-module.exports = router;
+module.exports = router; 
