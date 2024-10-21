@@ -7,7 +7,7 @@ import musasi from "../assets/luffy.jpg"
 const House = () => {
   return (
     <>
-        <img src={musasi} alt="musasi" />
+        <img src={musasi} alt="musasi" className="w-full h-auto"/>
     </>
   )
 }
